@@ -1,13 +1,14 @@
 /node_modules
+/public/hot
 /public/storage
-/storage/logs/*
-/storage/framework/*
 /storage/*.key
+/vendor
 /.idea
+/.vscode
+/.vagrant
 Homestead.json
 Homestead.yaml
-.tags
-.tags1
-/vendor
+npm-debug.log
+yarn-error.log
 .env
-/bootstrap/cache/*
+.idea/ workspace.xml
