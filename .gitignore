@@ -1,6 +1,7 @@
 /node_modules
 /public/storage
-/storage/*
+/storage/logs/*
+/storage/framework/*
 /storage/*.key
 /.idea
 Homestead.json
