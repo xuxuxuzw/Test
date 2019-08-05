@@ -11,6 +11,15 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+//前台
+Route::group(['namespace' => 'Home'],  function () {
+    Route::any('wechat/index', 'WechatController@index');
+    Route::any('wechat/oauth_callback', 'WechatController@oauth_callback');
+    Route::any('wechat/create_prepaid', 'WechatController@create_prepaid');
+    Route::any('order/wx_notify', 'OrderController@wx_notify');
+    Route::any('menu/saveButton', 'IndexController@saveButton');
+    Route::any('menu/getMenu', 'IndexController@getMenu');
+    Route::any('menu', 'IndexController@menu');
+    Route::any('/', 'IndexController@index');
+
 });
