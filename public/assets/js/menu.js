@@ -93,7 +93,9 @@ $(function(){
 		async: false,
 		dataType : "json",
 		success : function(menu) {
-			obj=menu;
+			if(!menu.errcode){
+				obj=menu;
+			}
 			console.log(obj)
 		}
 	});
