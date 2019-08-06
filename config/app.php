@@ -162,6 +162,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Overtrue\LaravelWeChat\ServiceProvider::class,
+        Caffeinated\Modules\ModulesServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -226,6 +227,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'EasyWeChat' => Overtrue\LaravelWeChat\Facade::class,
+        'Module' => Caffeinated\Modules\Facades\Module::class
     ],
 
 ];
