@@ -1,3 +1,8 @@
+$.ajaxSetup({
+	headers: {
+		'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+	}
+});
 $(function(){
 	var mId=null;
 	//显示自定义按钮组
