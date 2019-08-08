@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Home;
+namespace App\Modules\Index\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use EasyWeChat\Factory;
 use EasyWeChat\Kernel\Messages\Text;
 
-class WechatController extends Controller
+class WechatControllers extends Controllers
 {
     //微信验证
     public function index()
