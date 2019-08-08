@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+
 set_time_limit(0); //解除PHP脚本时间30s限制
 ini_set('memory_limit','128M');//修改内存值
 class sync extends Command
