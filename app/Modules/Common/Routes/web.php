@@ -20,4 +20,7 @@ Route::group(['prefix' => 'common'], function () {
     Route::any('mail/send','MsgContentControllers@send');
     Route::any('msg/sendQqSms','MsgContentControllers@sendQqSms');
     Route::any('msg/sendWxMsg','MsgContentControllers@sendWxMsg');
+    Route::any('msg/test','MsgContentControllers@test');
+    Route::any('msg/testAddMsgWechat','MsgContentControllers@testAddMsgWechat');
+    Route::any('msg/testAddQqSms','MsgContentControllers@testAddQqSms');
 });

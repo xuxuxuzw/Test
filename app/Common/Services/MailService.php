@@ -6,7 +6,7 @@
  * Time: 20:55
  */
 
-namespace App\Services;
+namespace App\Common\Services;
 
 use Illuminate\Support\Facades\Mail;
 

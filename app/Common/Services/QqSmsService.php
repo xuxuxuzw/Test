@@ -5,7 +5,7 @@
  * Date: 2019/5/4
  * Time: 20:55
  */
-namespace App\Services;
+namespace App\Common\Services;
 
 use Qcloud\Sms\SmsSingleSender;
 class QqSmsService

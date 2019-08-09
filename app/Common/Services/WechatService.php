@@ -6,12 +6,10 @@
  * Time: 20:55
  */
 
-namespace App\Services;
+namespace App\Common\Services;
 
 class WechatService
 {
-    protected $smsServer;
-    protected $sms;
     protected $templateId;
 
     //在这里传入内部模版ID,和params参数，和发送者数组
@@ -40,7 +38,6 @@ class WechatService
                 ],
             ]);
         }
-        die(var_dump($result));
-        return json_decode($result, true);
+        return $result;
     }
 }
