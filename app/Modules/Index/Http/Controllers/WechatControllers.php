@@ -19,7 +19,7 @@ class WechatControllers extends Controllers
 
     public function host_url()
     {
-        return 'http://test.xuzhaowen.cn';
+        return 'http://test.xuzhaowen.cn/index/index';
     }
 
     //网页授权获取openid

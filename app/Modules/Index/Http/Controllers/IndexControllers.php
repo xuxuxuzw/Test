@@ -20,7 +20,7 @@ class IndexControllers extends Controllers
             session(['target_url' => '/']);
             return $oauth->redirect();
         } else {
-            return view('index::Index.index', ['openid' => session('openid'), 'nickname' => session('nickname')]);
+            return view('index::index.index', ['openid' => session('openid'), 'nickname' => session('nickname')]);
         }
     }
 
