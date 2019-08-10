@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Home;
 
+use App\Common\Models\User;
 use Endroid\QrCode\QrCode;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Storage;
 
 class WechatController extends Controller
 {
@@ -19,6 +18,7 @@ class WechatController extends Controller
         if (Auth::check()) {
             return redirect('home');
         }
+
         return view('wechat_web_login');
     }
 
@@ -44,6 +44,7 @@ class WechatController extends Controller
                 case 'scan':
                     $errorCode = 1;
                     $msg = '已扫描';
+
                     break;
                 case 'cancel':
                     $errorCode = 1;
