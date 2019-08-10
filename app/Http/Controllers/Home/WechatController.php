@@ -2,133 +2,122 @@
 
 namespace App\Http\Controllers\Home;
 
+use Endroid\QrCode\QrCode;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use EasyWeChat\Factory;
-use EasyWeChat\Kernel\Messages\Text;
+use Cache;
+use Auth;
+use App\User;
+use Storage;
 
 class WechatController extends Controller
 {
-    //微信验证
-    public function index()
-    {
-        $app = app('wechat.official_account');
-        $response = $app->server->serve();
-        return $response;
-    }
 
-    public function host_url()
+    public function wechat_web_login()
     {
-        return 'http://test.xuzhaowen.cn';
-    }
-
-    //网页授权获取openid
-    public function oauth_callback()
-    {
-        //获取app实例
-        /** @var \EasyWeChat\OfficialAccount\Application $app */
-        $app = app('wechat.official_account');
-        $oauth = $app->oauth;
-        // 获取 OAuth 授权结果用户信息
-        $user = $oauth->user();
-        session(['openid' => $user->getId(),'nickname'=>$user->getNickname()]);
-        header('location:' . $this->host_url());
-    }
-
-
-    //生成预支付订单
-    public function create_prepaid($order_no)
-    {
-        $app = app('wechat.payment');
-        $result = $app->order->unify([
-            'body' => 'test',        //传你自己平台的订单介绍
-            'out_trade_no' => $order_no,    //传你自己平台的订单号
-            'total_fee' => 1,
-            'spbill_create_ip' => $_SERVER['REMOTE_ADDR'], // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
-            'notify_url' => 'http://****/order/wx_notify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
-            'trade_type' => 'JSAPI',
-            'openid' => session('openid'),
-        ]);
-        if ($result['return_code'] == "SUCCESS") {
-            $jssdk = $app->jssdk;
-            $config = $jssdk->sdkConfig($result['prepay_id']);
-            //这里easywechat官方函数有问题，修改timestamp为timeStamp
-            $config['timeStamp'] = $config['timestamp'];
-            unset($config['timestamp']);
-            return json_encode($config, JSON_UNESCAPED_UNICODE);
+        if (Auth::check()) {
+            return redirect('home');
         }
+        return view('wechat_web_login');
     }
 
-
-    /* 生成签名
-     * @return json
-     */
-
-    public function getSign($params)
+    public function api_web_login()
     {
-        ksort($params);        //将参数数组按照参数名ASCII码从小到大排序
-        foreach ($params as $key => $item) {
-            if (!empty($item)) {         //剔除参数值为空的参数
-                $newArr[] = $key . '=' . $item;     // 整合新的参数数组
+        $code = request()->code;
+
+        if ((!$code) || !Cache::has($code)) {
+            $code = uniqid();
+            $filename = $code . '.png';
+            Cache::put($code, 'login', 10);
+            $qrCode = new QrCode(env('APP_URL') . "/wechat/{$code}/login");
+
+            \Log::info(storage_path('app/public/' . $filename));
+            $qrCode->writeFile(storage_path('app/public/' . $filename));
+        }
+        $filename = $code . '.png';
+        $msg = '请扫码登录';
+        $errorCode = 1;
+        if (Cache::has($code . 'login_state')) {
+            $login_state = Cache::get($code . 'login_state');
+            switch ($login_state) {
+                case 'scan':
+                    $errorCode = 1;
+                    $msg = '已扫描';
+                    break;
+                case 'cancel':
+                    $errorCode = 1;
+                    $msg = '已取消';
+                    break;
+                case 'confirm':
+                    $errorCode = 0;
+                    $msg = '已确认登录';
+                    break;
             }
         }
-        $stringA = implode("&", $newArr);         //使用 & 符号连接参数
-        $stringSignTemp = $stringA . "&key=" . "*******************";        //一定要修改成自己的key，要不然会报sign签名错误
-        // key是在商户平台API安全里自己设置的
-        $stringSignTemp = MD5($stringSignTemp);       //将字符串进行MD5加密
-        $sign = strtoupper($stringSignTemp);      //将所有字符转换为大写
-        return $sign;
+        return json_encode(['errorCode' => $errorCode, 'code' => $code, 'msg' => $msg, 'qrcode_url' => asset('storage/' . $filename), 'redirect' => route('web.login') . '?code=' . $code]);
     }
 
-    /* 数组转xml
-     * @return json
-     */
-
-    public function ToXml($data = array())
+    public function web_login()
     {
-        if (!is_array($data) || count($data) <= 0) {
-            return '数组异常';
+        $code = request()->code;
+        if (!Cache::has($code)) {
+            abort(404);
         }
-
-        $xml = "<xml>";
-        foreach ($data as $key => $val) {
-            if (is_numeric($val)) {
-                $xml .= "<" . $key . ">" . $val . "</" . $key . ">";
-            } else {
-                $xml .= "<" . $key . "><![CDATA[" . $val . "]]></" . $key . ">";
-            }
+        if (!Cache::has($code . 'login_state')) {
+            abort(404);
         }
-        $xml .= "</xml>";
-        return $xml;
+        if (Cache::get($code . 'login_state') != 'confirm') {
+            abort(404);
+        }
+        $user = User::where('rand_key', $code)->first();
+        if (!$user) {
+            abort(404, 'code 失效');
+        }
+        Cache::forget($code);
+        Auth::login($user);
+        return redirect('home');
     }
 
-    /* xml转数组
-     * @return json
-     */
-
-    public function FromXml($xml)
+    public function login_code_state($code)
     {
-        if (!$xml) {
-            echo "xml数据异常！";
+        if (!Cache::has($code)) {
+            return json_encode(['errorCode' => 1, 'msg' => '登陆已过期']);
         }
-        //将XML转为array
-        //禁止引用外部xml实体
-        libxml_disable_entity_loader(true);
-        $data = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
-        return $data;
+        Cache::put($code . 'login_state', 'scan', 10);
+        return json_encode(['errorCode' => 0, 'msg' => 'ok']);
+
     }
 
-    /* 随机字符串
-     * @return json
-     */
-
-    public function rand_code()
+    public function confirm_login()
     {
-        $str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; //62个字符
-        $str = str_shuffle($str);
-        $str = substr($str, 0, 32);
-        return $str;
+        $code = request()->input('code');
+        if (!$code) {
+            return json_encode(['errorCode' => 1, 'msg' => '缺少参数']);
+        }
+        if (!Cache::has($code)) {
+            return json_encode(['errorCode' => 1, 'msg' => '登陆已过期']);
+        }
+        $user = Auth::user();
+        $user->rand_key = $code;
+        $user->save();
+        Cache::put($code . 'login_state', 'confirm', 10);
+
+        return json_encode(['errorCode' => 0, 'msg' => '已确认登陆']);
+
+
     }
 
+    public function cancel_login()
+    {
+        $code = request()->input('code');
+        if (!$code) {
+            return json_encode(['errorCode' => 1, 'msg' => '缺少参数']);
+        }
+        if (!Cache::has($code)) {
+            return json_encode(['errorCode' => 1, 'msg' => '登陆已过期']);
+        }
+        Cache::put($code . 'login_state', 'cancel', 10);
 
+        return json_encode(['errorCode' => 0, 'msg' => '已取消登陆']);
+    }
 }
