@@ -3,8 +3,7 @@
 namespace App;
 
 use Doctrine\Common\Cache\Cache as CacheInterface;
-use \Cache;
-
+use Illuminate\Support\Facades\Cache;
 class CacheBridge implements CacheInterface
 {
     public function fetch($id)
