@@ -8,6 +8,7 @@
 
 namespace App\Common\Services;
 
+use App\Common\Models\MsgChannel;
 use App\Common\Models\MsgContent;
 use App\Common\Repositories\MsgChannelRepositories;
 use App\Common\Repositories\MsgContentRepositories;
@@ -17,6 +18,16 @@ use Illuminate\Support\Facades\Mail;
 
 class MsgService
 {
+    /*
+    * @var int 发送成功
+    */
+    const SENT_SUCCESS = 1;
+
+    /**
+     * @var int 发送失败
+     */
+    const SENT_FAIL = 0;
+
     protected $msg_channel_repositories;
     protected $msg_template_repositories;
     protected $msg_content_repositories;
@@ -88,6 +99,119 @@ class MsgService
         }
 
         return $messages;
+    }
+
+    /**
+     * 拉取待处理消息列表
+     * @return array
+     */
+    public function pull()
+    {
+        $result = $this->msg_content_repositories->getMsgContents([
+            'status' => MsgContent::STATUS_UNSENT
+        ]);
+
+        return !empty($result) ? $result : [];
+    }
+
+    /**
+     * 处理消息
+     */
+    public function handle()
+    {
+        $messages = $this->pull();
+
+        if (empty($messages)) {
+            dd('end');
+        }
+        $channels = $this->msg_channel_repositories->getMsgChannels();
+        $channels = array_column($channels, null, 'id');
+
+        foreach ($messages as $message) {
+            $request_time = time();
+            try {
+                switch ($message['cp_msg_channel_type']) {
+                    case MsgChannel::TYPE_QQ_SMS:
+                        $result = $this->sendQqSMSMsg($message);
+                        break;
+                    case MsgChannel::TYPE_WECHAT_SERVICE:
+                        $result = $this->sendWechatServiceTemplateMsg($message);
+                        break;
+                }
+            } catch (\Exception $e) {
+                $result = ['code' => self::SENT_FAIL, 'out_message_no' => '', 'message' => $e->getMessage()];
+            }
+
+            $message_update = [
+                'status' => !empty($result['code']) ? MsgContent::STATUS_SENT : MsgContent::STATUS_FAIL,
+                'channel_return_msg' => !empty($result['message']) ? $result['message'] : '',
+                'commit_time' => $request_time,
+                'update_time' => time(),
+            ];
+            if (!empty($result['out_message_no'])) {
+                $message_update['out_message_no'] = $result['out_message_no'];
+            }
+
+            //更新发送状态
+            $this->msg_content_repositories->updateMsgContent([['id', $message['id']]], $message_update);
+        }
+        return 'end';
+    }
+
+    /**
+     * 发送微信测试号模板消息
+     * @param array $channel 渠道
+     * @param array $message 消息
+     * @return array ['code' => 0|1, 'out_message_no' => string, 'message' => string]
+     * @throws \EasyWeChat\Core\Exceptions\InvalidArgumentException
+     */
+    private function sendWechatServiceTemplateMsg($message)
+    {
+        $response = ['code' => self::SENT_FAIL, 'out_message_no' => '', 'message' => ''];
+
+        $wechat_service = new WechatService();
+        $result = $wechat_service->sendMsg($message);
+        if (!empty($result) && is_object($result)) {
+            if ($result->errcode == 0) {
+                $response['code'] = 1;
+                $response['out_message_no'] = $result->msgid;
+            }
+            $response['message'] = $result->errmsg;
+        }
+
+        return $response;
+    }
+
+    /**
+     * 发送阿里云短信消息
+     * User zhongronglin@3ncto.com
+     * @param array $channel 渠道
+     * @param array $message 消息
+     * @return array ['code' => 0|1, 'out_message_no' => string, 'message' => string]
+     */
+    private function sendQqSMSMsg($message)
+    {
+        $response = ['code' => self::SENT_FAIL, 'out_message_no' => '', 'message' => ''];
+
+        if ($message['receiver_source_id'] == '18888888888') {
+            $response['message'] = '号码不正确';
+            return $response;
+        }
+
+        $qqyunSms = new QqSmsService();
+        $result = $qqyunSms->sendMsg($message);
+
+        if (!empty($result) && is_array($result)) {
+            if ($result['errmsg'] == 'OK') {
+                $response['code'] = 1;
+                $response['message'] = '发送成功';
+            } else {
+                $response['code'] = 3;
+                $response['message'] = '发送失败' . json_encode($result, true);
+            }
+        }
+
+        return $response;
     }
 
 }

@@ -18,5 +18,9 @@ class MsgContent extends Model
     //主要
     protected $primaryKey = 'id';
 
+    public $timestamps = false;
+
     const STATUS_UNSENT = 0;//未发送
+    const STATUS_SENT = 1;//发送
+    const STATUS_FAIL = 3;//发送失败
 }

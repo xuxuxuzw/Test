@@ -20,10 +20,15 @@ class MsgContentRepositories extends BaseRepository
     {
         $this->msg_content = new MsgContent();
     }
-    
+
     public function getMsgContent($id)
     {
         return $this->msg_content->where('id', $id)->first()->toArray();
+    }
+
+    public function getMsgContents($where = [['status', MsgContent::STATUS_UNSENT]])
+    {
+        return $this->msg_content->where($where)->orderBy('id','asc')->get()->toArray();
     }
 
     public function addMsgContent($params)

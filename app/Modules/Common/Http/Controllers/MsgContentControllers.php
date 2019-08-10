@@ -37,23 +37,7 @@ class MsgContentControllers extends Controllers
 
     public function test()
     {
-        //echo "<pre>";
-//        $result = $this->msg_channel_repositories->getMsgChannel(2);
-//        var_dump($result);
-        //$msg_template = $this->msg_template_repositories->getMsgTemplate(2);
-//        var_dump($msg_template);
-//exit;
-        //$result = $this->msg_content_repositories->getMsgContent(1);
-
-        $code = mt_rand(0, 9999);
-        $code = str_pad($code, 4, 0, STR_PAD_RIGHT);
-
-        $receiver_source_ids = ['receiver_source_ids' => ['18320029829']];
-        $template_params = [
-            'code' => $code,
-            'time' => 30,
-        ];
-        return (new MsgService())->push(1, $receiver_source_ids, $template_params);
+        return (new MsgService())->handle();
     }
 
     public function testAddQqSms()
@@ -71,10 +55,13 @@ class MsgContentControllers extends Controllers
 
         $receiver_source_ids = ['receiver_source_ids' => ['18320029829']];
         $template_params = [
-            'code' => $code,
-            'time' => 30,
+            'value1' => date('m',time()),
+            'value2' => date('d',time()),
+            'value3' => date('H',time()),
+            'value4' => date('i',time()),
+            'value5' => '广州天河',
         ];
-        return (new MsgService())->push(1, $receiver_source_ids, $template_params);
+        return (new MsgService())->push(3, $receiver_source_ids, $template_params);
     }
 
     public function testAddMsgWechat()

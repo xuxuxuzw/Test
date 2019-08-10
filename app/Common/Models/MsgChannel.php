@@ -17,6 +17,8 @@ class MsgChannel extends Model
     //主要
     protected $primaryKey = 'id';
 
+    public $timestamps = false;
+
     // 通道类型
     const TYPE_QQ_SMS = 1; //腾讯云短信消息
     const TYPE_WECHAT_SERVICE = 2; //微信测试号消息

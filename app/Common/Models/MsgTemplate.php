@@ -16,4 +16,6 @@ class MsgTemplate extends Model
     protected $table = 'msg_template';
     //主要
     protected $primaryKey = 'id';
+
+    public $timestamps = false;
 }

@@ -25,6 +25,11 @@ class MsgChannelRepositories extends BaseRepository
         return $this->msg_channel->where('id', $id)->first()->toArray();
     }
 
+    public function getMsgChannels()
+    {
+        return $this->msg_channel->get()->toArray();
+    }
+
     public function addMsgChannel($params)
     {
         return $this->msg_channel
