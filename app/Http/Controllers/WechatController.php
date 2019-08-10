@@ -22,7 +22,7 @@ class WechatController extends Controller
     }
     public function redirect(Request $request)
     {
-        $app = app('wechat.official_account');
+        $app = app('wechat');
         return $app->oauth->scopes(['snsapi_base'])
             ->setRequest($request)
             ->redirect();
@@ -30,7 +30,7 @@ class WechatController extends Controller
 
     public function callback(Request $request)
     {
-        $app = app('wechat.official_account');
+        $app = app('wechat');
         $user = $app->oauth->setRequest($request)->user();
         $original = $user->getOriginal();
 
@@ -53,7 +53,7 @@ class WechatController extends Controller
 
     public function jsConfig()
     {
-        $app = app('wechat.official_account');
+        $app = app('wechat');
         $js = $app->jssdk;
         if(request()->url){
             $js->setUrl(request()->url);
