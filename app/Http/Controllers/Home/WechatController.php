@@ -29,7 +29,7 @@ class WechatController extends Controller
             $code = uniqid();
             $filename = $code . '.png';
             Cache::put($code, 'login', 10);
-            $qrCode = new QrCode(env('APP_URL') . "/wechat/{$code}/login");
+            $qrCode = new QrCode(env('APP_URL') . "/wechat/login/{$code}/state");
 
             \Log::info(storage_path('app/public/' . $filename));
             $qrCode->writeFile(storage_path('app/public/' . $filename));
