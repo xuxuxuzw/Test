@@ -75,7 +75,6 @@ class MsgContentControllers extends Controllers
         //$result = $this->msg_content_repositories->getMsgContent(1);
         $receiver_source_ids = ['receiver_source_ids' => ['oEOT9wAU6gHTzIb89ENn_CtytJ08', 'oEOT9wAQIoLqGzPd-agIVZ9OG-DA']];
         $template_params = [
-            'code' => 'http://test.xuzhaowen.cn/index/index',
             'nickname' => 'xzw',
             'openid' => 'oEOT9wAU6gHTzIb89ENn_CtytJ08',
             'web' => '管理系统',

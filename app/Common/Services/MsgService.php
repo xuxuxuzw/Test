@@ -176,7 +176,7 @@ class MsgService
                 $response['code'] = 1;
                 $response['out_message_no'] = $result->msgid;
             }
-            $response['message'] = $result->errmsg;
+            $response['message'] = json_encode($result);
         }
 
         return $response;
