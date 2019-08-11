@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Cache;
 use Auth;
-use App\User;
+use App\Common\Models\User;
 use Storage;
 use Endroid\QrCode\QrCode;
 

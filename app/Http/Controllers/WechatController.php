@@ -8,7 +8,7 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\User;
+use App\Common\Models\User;
 
 class WechatController extends Controller
 {
