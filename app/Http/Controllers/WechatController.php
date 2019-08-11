@@ -23,6 +23,10 @@ class WechatController extends Controller
                 'level' => env('WECHAT_LOG_LEVEL'),
                 'file' => storage_path(env('WECHAT_LOG_FILE')),
             ],
+            'oauth' => [
+                'scopes'   => array_map('trim', explode(',', env('WECHAT_OFFICIAL_ACCOUNT_OAUTH_SCOPES'))),
+                'callback' => env('WECHAT_OFFICIAL_ACCOUNT_OAUTH_CALLBACK'),
+            ],
         ];
         /** @var \EasyWeChat\OfficialAccount\Application $app */
         $app = Factory::officialAccount($options);
@@ -40,7 +44,7 @@ class WechatController extends Controller
     public function redirect(Request $request)
     {
         $app = $this->getApp();
-        //$app = app('wechat.official_account');
+        //$app = app('wechat.official_account'); //snsapi_userinfo
         return $app->oauth->scopes(['snsapi_base'])
             ->setRequest($request)
             ->redirect();
