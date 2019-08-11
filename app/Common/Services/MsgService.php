@@ -122,7 +122,7 @@ class MsgService
         $messages = $this->pull();
 
         if (empty($messages)) {
-            dd('end');
+            exit;
         }
         $channels = $this->msg_channel_repositories->getMsgChannels();
         $channels = array_column($channels, null, 'id');

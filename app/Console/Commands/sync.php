@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Common\Services\MsgService;
 use App\Modules\Common\Http\Controllers\MsgContentControllers;
 use App\Services\WechatService;
 use Illuminate\Console\Command;
@@ -75,7 +76,7 @@ php artisan command:sync contacts or php artisan command:sync --func=contacts ';
 
     //发送微信消息
     public static  function sendWxMsg(){
-        (new MsgContentControllers())->sendWxMsg(new WechatService,new Request);
+        (new MsgService())->handle();
     }
     //文件同步
     public static  function file(){
