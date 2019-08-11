@@ -172,9 +172,9 @@ class MsgService
         $wechat_service = new WechatService();
         $result = $wechat_service->sendMsg($message);
         if (!empty($result) && is_array($result)) {
-            if ($result->errcode == 0) {
+            if ($result['errcode'] == 0) {
                 $response['code'] = 1;
-                $response['out_message_no'] = $result->msgid;
+                $response['out_message_no'] = $result['msgid'];
             }
             $response['message'] = $result['errmsg'];
         }
