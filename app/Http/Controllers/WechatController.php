@@ -7,9 +7,8 @@
  */
 
 namespace App\Http\Controllers;
-use App\Common\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\User;
 
 class WechatController extends Controller
 {
@@ -42,10 +41,10 @@ class WechatController extends Controller
 
         $user = User::where('openid',$openId)->first();
         if($user){
-            Auth::login($user);
+            \Auth::login($user);
         }else{
             $userNew = User::create($array);
-            Auth::login($userNew);
+            \Auth::login($userNew);
         }
         return redirect()->intended('/home');
 
