@@ -39,6 +39,7 @@ Route::post('api/home/wechat/login/api_web_login','Home\WechatController@api_web
 Route::get('web/login','Home\WechatController@web_login')->name('web.login');//轮训成功后指向该页面登录
 
 Route::group(['middleware'=>'auth'],function(){
-    Route::any('/{all?}','FrontController@home')->where(['all'=>'.*']);
+    //Route::any('/{all?}','FrontController@home')->where(['all'=>'.*']);
+    Route::any('/wechat/{code}/login','FrontController@home');
 });
 

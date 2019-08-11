@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Home;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Cache;
 use Auth;
 use App\Common\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Storage;
 use Endroid\QrCode\QrCode;
 
@@ -30,7 +30,7 @@ class WechatController extends Controller
             $code = uniqid();
             $filename = $code . '.png';
             Cache::put($code, 'login', 10);
-            $qrCode = new QrCode(env('APP_URL') . "/wechat/{$code}/login");
+            $qrCode = new QrCode(env('APP_URL') . "/wechat/login/{$code}/state");
             \Log::info(storage_path('app/public/' . $filename));
             $qrCode->writeFile(storage_path('app/public/' . $filename));
         }
@@ -61,17 +61,17 @@ class WechatController extends Controller
     {
         $code = request()->code;
         if (!Cache::has($code)) {
-            abort(404);
+            abort(405);
         }
         if (!Cache::has($code . 'login_state')) {
-            abort(404);
+            abort(406);
         }
         if (Cache::get($code . 'login_state') != 'confirm') {
-            abort(404);
+            abort(407);
         }
         $user = User::where('rand_key', $code)->first();
         if (!$user) {
-            abort(404, 'code 失效');
+            abort(408, 'code 失效');
         }
         Cache::forget($code);
         Auth::login($user);
