@@ -7,21 +7,40 @@
  */
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Common\Models\User;
+use EasyWeChat\Factory;
 
 class WechatController extends Controller
 {
+    public function getApp(){
+        $options = [
+            'app_id' => env('WECHAT_OFFICIAL_ACCOUNT_APPID'),
+            'secret' => env('WECHAT_OFFICIAL_ACCOUNT_SECRET'),
+            'token' => env('WECHAT_OFFICIAL_ACCOUNT_TOKEN'),
+            'log' => [
+                'level' => env('WECHAT_LOG_LEVEL'),
+                'file' => storage_path(env('WECHAT_LOG_FILE')),
+            ],
+        ];
+        /** @var \EasyWeChat\OfficialAccount\Application $app */
+        $app = Factory::officialAccount($options);
+        return $app;
+    }
     //微信验证
     public function index()
     {
-        $app = app('wechat.official_account');
+        $app = $this->getApp();
+        //$app = app('wechat.official_account');
         $response = $app->server->serve();
         return $response;
     }
+
     public function redirect(Request $request)
     {
-        $app = app('wechat.official_account');
+        $app = $this->getApp();
+        //$app = app('wechat.official_account');
         return $app->oauth->scopes(['snsapi_base'])
             ->setRequest($request)
             ->redirect();
@@ -29,20 +48,23 @@ class WechatController extends Controller
 
     public function callback(Request $request)
     {
-        $app = app('wechat.official_account');
+        $app = $this->getApp();
+        //$app = app('wechat.official_account');
         $user = $app->oauth->setRequest($request)->user();
         $original = $user->getOriginal();
 
-        $array = array_only($original,array (
+        var_dump($request);
+        dd($original);
+        $array = array_only($original, array(
             'openid',
         ));
 
         $openId = $array['openid'];
 
-        $user = User::where('openid',$openId)->first();
-        if($user){
+        $user = User::where('openid', $openId)->first();
+        if ($user) {
             \Auth::login($user);
-        }else{
+        } else {
             $userNew = User::create($array);
             \Auth::login($userNew);
         }
@@ -52,13 +74,14 @@ class WechatController extends Controller
 
     public function jsConfig()
     {
-        $app = app('wechat.official_account');
+        $app = $this->getApp();
+        //$app = app('wechat.official_account');
         $js = $app->jssdk;
-        if(request()->url){
+        if (request()->url) {
             $js->setUrl(request()->url);
         }
 
-        $jsConfig = json_decode($js->buildConfig(array('updateAppMessageShareData', 'updateTimelineShareData','onMenuShareAppMessage','onMenuShareTimeline','onMenuShareAppMessage','getLocation','openLocation'),true));
-        return json_encode(['errorCode'=>0,'errorMsg'=>'ok','data'=>['js_config'=>$jsConfig]]);
+        $jsConfig = json_decode($js->buildConfig(array('updateAppMessageShareData', 'updateTimelineShareData', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'getLocation', 'openLocation'), true));
+        return json_encode(['errorCode' => 0, 'errorMsg' => 'ok', 'data' => ['js_config' => $jsConfig]]);
     }
 }

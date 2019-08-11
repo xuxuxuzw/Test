@@ -22,6 +22,7 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 
+Route::get('wechat/index','WechatController@index')->name('wechat.index');
 Route::get('wechat/redirect','WechatController@redirect')->name('wechat.redirect');
 Route::get('wechat/callback','WechatController@callback')->name('wechat.callback');
 
