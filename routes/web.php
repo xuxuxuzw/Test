@@ -26,8 +26,8 @@ Route::get('wechat/index','BaseWechatController@index')->name('wechat.index');
 Route::get('wechat/common/redirect','CommonWechatController@redirect')->name('wechat.common.redirect');
 Route::get('wechat/common/callback','CommonWechatController@callback')->name('wechat.common.callback');
 
-Route::get('wechat/index/redirect','CommonWechatController@redirect')->name('wechat.index.redirect');
-Route::get('wechat/index/callback','CommonWechatController@callback')->name('wechat.index.callback');
+Route::get('wechat/index/redirect','IndexWechatController@redirect')->name('wechat.index.redirect');
+Route::get('wechat/index/callback','IndexWechatController@callback')->name('wechat.index.callback');
 
 Route::group(['middleware'=>'auth'],function(){
 
