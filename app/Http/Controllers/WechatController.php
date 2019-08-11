@@ -15,13 +15,13 @@ class WechatController extends Controller
     //微信验证
     public function index()
     {
-        $app = app('wechat');
+        $app = app('wechat.official_account');
         $response = $app->server->serve();
         return $response;
     }
     public function redirect(Request $request)
     {
-        $app = app('wechat');
+        $app = app('wechat.official_account');
         return $app->oauth->scopes(['snsapi_base'])
             ->setRequest($request)
             ->redirect();
@@ -29,7 +29,7 @@ class WechatController extends Controller
 
     public function callback(Request $request)
     {
-        $app = app('wechat');
+        $app = app('wechat.official_account');
         $user = $app->oauth->setRequest($request)->user();
         $original = $user->getOriginal();
 
@@ -52,7 +52,7 @@ class WechatController extends Controller
 
     public function jsConfig()
     {
-        $app = app('wechat');
+        $app = app('wechat.official_account');
         $js = $app->jssdk;
         if(request()->url){
             $js->setUrl(request()->url);
