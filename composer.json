@@ -18,7 +18,8 @@
     "overtrue/wechat": "~4.0",
     "qcloudsms/qcloudsms_php": "0.1.*",
     "endroid/qr-code": "^3.5",
-    "fideloper/proxy": "^4.0"
+    "fideloper/proxy": "^4.0",
+    "doctrine/cache": "^1.8"
   },
   "require-dev": {
     "beyondcode/laravel-dump-server": "^1.0",
