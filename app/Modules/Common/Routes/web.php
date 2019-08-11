@@ -23,4 +23,7 @@ Route::group(['prefix' => 'common'], function () {
     Route::any('msg/test','MsgContentControllers@test');
     Route::any('msg/testAddMsgWechat','MsgContentControllers@testAddMsgWechat');
     Route::any('msg/testAddQqSms','MsgContentControllers@testAddQqSms');
+
+    //登录
+    Route::any('login/login','MsgContentControllers@send');
 });
