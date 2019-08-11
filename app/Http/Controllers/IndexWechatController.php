@@ -12,9 +12,10 @@ use Illuminate\Http\Request;
 use App\Common\Models\User;
 use EasyWeChat\Factory;
 
-class WechatController extends Controller
+class IndexWechatController extends BaseWechatController
 {
-    public function getApp(){
+    public function getApp()
+    {
         $options = [
             'app_id' => env('WECHAT_OFFICIAL_ACCOUNT_APPID'),
             'secret' => env('WECHAT_OFFICIAL_ACCOUNT_SECRET'),
@@ -24,30 +25,13 @@ class WechatController extends Controller
                 'file' => storage_path(env('WECHAT_LOG_FILE')),
             ],
             'oauth' => [
-                'scopes'   => array_map('trim', explode(',', env('WECHAT_OFFICIAL_ACCOUNT_OAUTH_SCOPES'))),
-                'callback' => env('WECHAT_OFFICIAL_ACCOUNT_OAUTH_CALLBACK'),
+                'scopes' => array_map('trim', explode(',', env('WECHAT_OFFICIAL_ACCOUNT_OAUTH_SCOPES'))),
+                'callback' => '/wechat/index/callback',
             ],
         ];
         /** @var \EasyWeChat\OfficialAccount\Application $app */
         $app = Factory::officialAccount($options);
         return $app;
-    }
-    //微信验证
-    public function index()
-    {
-        $app = $this->getApp();
-        //$app = app('wechat.official_account');
-        $response = $app->server->serve();
-        return $response;
-    }
-
-    public function redirect(Request $request)
-    {
-        $app = $this->getApp();
-        //$app = app('wechat.official_account'); //snsapi_userinfo
-        return $app->oauth->scopes(['snsapi_base'])
-            ->setRequest($request)
-            ->redirect();
     }
 
     public function callback(Request $request)
@@ -56,9 +40,6 @@ class WechatController extends Controller
         //$app = app('wechat.official_account');
         $user = $app->oauth->setRequest($request)->user();
         $original = $user->getOriginal();
-
-        var_dump($request);
-        dd($original);
         $array = array_only($original, array(
             'openid',
         ));
@@ -72,8 +53,7 @@ class WechatController extends Controller
             $userNew = User::create($array);
             \Auth::login($userNew);
         }
-        return redirect()->intended('/home');
-
+        return redirect()->intended('/index');
     }
 
     public function jsConfig()

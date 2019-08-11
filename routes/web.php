@@ -22,9 +22,12 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 
-Route::get('wechat/index','WechatController@index')->name('wechat.index');
-Route::get('wechat/redirect','WechatController@redirect')->name('wechat.redirect');
-Route::get('wechat/callback','WechatController@callback')->name('wechat.callback');
+Route::get('wechat/index','BaseWechatController@index')->name('wechat.index');
+Route::get('wechat/common/redirect','CommonWechatController@redirect')->name('wechat.common.redirect');
+Route::get('wechat/common/callback','CommonWechatController@callback')->name('wechat.common.callback');
+
+Route::get('wechat/index/redirect','CommonWechatController@redirect')->name('wechat.index.redirect');
+Route::get('wechat/index/callback','CommonWechatController@callback')->name('wechat.index.callback');
 
 Route::group(['middleware'=>'auth'],function(){
 
