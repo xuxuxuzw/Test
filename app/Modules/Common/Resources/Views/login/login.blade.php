@@ -11,9 +11,9 @@
         <div style="text-align: center">
             <img src="/images/c43e884352f59a4d23574aebaeb97f3.png" alt=""><br>
             <a href="{{route('wechat.web.login')}}" style="font-size: 30px"> 测试微信扫码登录</a>
-            @include('wechat_web_login.blade')
         </div>
     </div>
+    @include('wechat_web_login')
 </div>
 </body>
 </html>
