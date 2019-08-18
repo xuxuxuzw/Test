@@ -25,6 +25,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('wechat/index','BaseWechatController@index')->name('wechat.index');
 Route::get('wechat/common/redirect','CommonWechatController@redirect')->name('wechat.common.redirect');
 Route::get('wechat/common/callback','CommonWechatController@callback')->name('wechat.common.callback');
+Route::get('wechat/common/send_work_wechat_msg','CommonWechatController@sendWorkWechatMsg')->name('wechat.common.send_work_wechat_msg');//测试企业微信发送消息
 
 Route::get('wechat/index/redirect','IndexWechatController@redirect')->name('wechat.index.redirect');
 Route::get('wechat/index/callback','IndexWechatController@callback')->name('wechat.index.callback');

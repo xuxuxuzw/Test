@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use EasyWeChat\Kernel\Messages\TextCard;
 use Illuminate\Http\Request;
 use App\Common\Models\User;
 use EasyWeChat\Factory;
@@ -69,4 +70,25 @@ class CommonWechatController extends BaseWechatController
         return json_encode(['errorCode' => 0, 'errorMsg' => 'ok', 'data' => ['js_config' => $jsConfig]]);
     }
 
+    public function sendWorkWechatMsg()
+    {
+        // 获取 Messenger 实例
+        $app = $this->getWorkApp();
+//        $result = $app->user->mobileToUserId('18320029829');
+//        dd($result);
+//
+        $messenger = $app->messenger;
+
+        // 准备消息
+        $message = new TextCard([
+            'title' => '你的请假单审批通过',
+            'description' => "时间：".date('Y-m-d H:i')."\r\n内容：您的请假审批已通过，请查阅！",
+            'url' => 'http://test.xuzhaowen.cn'
+        ]);
+        $result = $messenger->message($message)->toUser('XuZhaoWen')->ofAgent(env('WECHAT_WORK_AGENT_ID'))->send();
+        dd($result);
+
+        $result = $messenger->toUser('XuZhaoWen')->ofAgent(env('WECHAT_WORK_AGENT_ID'))->send('hello ！');
+        dd($result);
+    }
 }

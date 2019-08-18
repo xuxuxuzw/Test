@@ -15,6 +15,7 @@ use EasyWeChat\Factory;
 
 class BaseWechatController extends BaseController
 {
+    //获取微信公众号实例
     public function getApp()
     {
         $options = [
@@ -35,6 +36,7 @@ class BaseWechatController extends BaseController
         return $app;
     }
 
+    //获取微信小程序实例
     public function getProgramApp()
     {
         $config = [
@@ -54,6 +56,28 @@ class BaseWechatController extends BaseController
         $app = Factory::miniProgram($config);
         return $app;
     }
+
+    //获取企业微信实例
+    public function getWorkApp()
+    {
+        $config = [
+            'corp_id' => env('WECHAT_WORK_CORP_ID'),
+            'agent_id' => env('WECHAT_WORK_AGENT_ID'), // 如果有 agend_id 则填写
+            'secret' => env('WECHAT_WORK_AGENT_CONTACTS_SECRET'),
+
+            // 指定 API 调用返回结果的类型：array(default)/collection/object/raw/自定义类名
+            'response_type' => 'array',
+
+            'log' => [
+                'level' => env('WECHAT_LOG_LEVEL'),
+                'file' => storage_path(env('WECHAT_LOG_FILE')),
+            ],
+        ];
+        /** @var \EasyWeChat\Work\Application $app */
+        $app = Factory::work($config);
+        return $app;
+    }
+
 
     //微信验证
     public function index()
