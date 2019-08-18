@@ -1,15 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: 3N
- * Date: 2018/9/9
- * Time: 21:32
- */
-namespace App\Common\Services;
+
+namespace App\Common\Logics;
+
 
 use App\Common\ErrorCode;
 
-class BaseService
+class BaseLogic
 {
     /**
      * 抛出异常
@@ -17,7 +13,7 @@ class BaseService
      * @param string $error_msg
      * @throws \Exception
      */
-    public function throwException($error_code, $error_msg = '')
+    protected function throwException($error_code, $error_msg = '')
     {
         if (is_array($error_msg)) {
             $msg_arr = $error_msg;
@@ -25,7 +21,8 @@ class BaseService
         } else {
             empty($error_msg) && $error_msg = ErrorCode::getMessage($error_code);
         }
-
         throw new \Exception($error_msg, $error_code);
     }
 }
+
+

@@ -26,4 +26,12 @@ Route::group(['prefix' => 'common'], function () {
 
     //登录
     Route::any('login/login','LoginControllers@login');
+
+    //公共上传接口
+    Route::post('upload/file','UploadControllers@file');//单文件上传
+    Route::post('upload/files','UploadControllers@files');//单文件上传
+    Route::post('upload/image','UploadControllers@image');//单图片上传
+    Route::post('upload/images','UploadControllers@images');//多图片上传
+
+
 });

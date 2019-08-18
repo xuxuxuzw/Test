@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Index\Http\Controllers;
+namespace App\Modules\Base\Http\Controllers;
 
 use App\Common\Controllers\BaseController;
 

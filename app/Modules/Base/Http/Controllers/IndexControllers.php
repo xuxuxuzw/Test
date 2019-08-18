@@ -2,9 +2,7 @@
 
 namespace App\Modules\Base\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-
-class IndexControllers extends Controller
+class IndexControllers extends Controllers
 {
     public function index()
     {

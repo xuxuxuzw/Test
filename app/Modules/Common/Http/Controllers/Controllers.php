@@ -2,9 +2,9 @@
 
 namespace App\Modules\Common\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Common\Controllers\BaseController;
 
-class Controllers extends Controller
+class Controllers extends BaseController
 {
 
 }
