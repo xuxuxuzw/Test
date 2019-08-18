@@ -34,6 +34,7 @@ class IndexWechatController extends BaseWechatController
         return $app;
     }
 
+
     public function callback(Request $request)
     {
         $app = $this->getApp();
@@ -67,5 +68,9 @@ class IndexWechatController extends BaseWechatController
 
         $jsConfig = json_decode($js->buildConfig(array('updateAppMessageShareData', 'updateTimelineShareData', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'getLocation', 'openLocation'), true));
         return json_encode(['errorCode' => 0, 'errorMsg' => 'ok', 'data' => ['js_config' => $jsConfig]]);
+    }
+
+    public function test(){
+        $app = $this->getProgramApp();
     }
 }

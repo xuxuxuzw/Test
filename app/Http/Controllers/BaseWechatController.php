@@ -8,11 +8,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Common\Controllers\BaseController;
 use Illuminate\Http\Request;
 use App\Common\Models\User;
 use EasyWeChat\Factory;
 
-class BaseWechatController extends Controller
+class BaseWechatController extends BaseController
 {
     public function getApp()
     {
@@ -31,6 +32,26 @@ class BaseWechatController extends Controller
         ];
         /** @var \EasyWeChat\OfficialAccount\Application $app */
         $app = Factory::officialAccount($options);
+        return $app;
+    }
+
+    public function getProgramApp()
+    {
+        $config = [
+            'app_id' => env('WECHAT_MINI_PROGRAM_APPID'),
+            'secret' => env('WECHAT_MINI_PROGRAM_SECRET'),
+
+            // 下面为可选项
+            // 指定 API 调用返回结果的类型：array(default)/collection/object/raw/自定义类名
+            'response_type' => 'array',
+
+            'log' => [
+                'level' => env('WECHAT_LOG_LEVEL'),
+                'file' => storage_path(env('WECHAT_LOG_FILE')),
+            ],
+        ];
+        /** @var \EasyWeChat\MiniProgram\Application $app */
+        $app = Factory::miniProgram($config);
         return $app;
     }
 

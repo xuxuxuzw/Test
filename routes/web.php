@@ -28,6 +28,7 @@ Route::get('wechat/common/callback','CommonWechatController@callback')->name('we
 
 Route::get('wechat/index/redirect','IndexWechatController@redirect')->name('wechat.index.redirect');
 Route::get('wechat/index/callback','IndexWechatController@callback')->name('wechat.index.callback');
+Route::get('wechat/index/test','IndexWechatController@test')->name('wechat.index.test');
 
 Route::group(['middleware'=>'auth'],function(){
 
